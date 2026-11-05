@@ -634,7 +634,7 @@ function Orders() {
                 <TableCell className="whitespace-nowrap">
                   {rupee(o.total)}<br />
                   <span className="text-xs text-muted-foreground">
-                    Advance {rupee(split(o.total).advance)} · at pickup {rupee(split(o.total).balance)}<br />
+                    Advance {rupee(split(o.total).advance)} · after receiving {rupee(split(o.total).balance)}<br />
                     {o.payment_mode}{o.coupon ? ` · ${o.coupon}` : ""}
                   </span>
                 </TableCell>

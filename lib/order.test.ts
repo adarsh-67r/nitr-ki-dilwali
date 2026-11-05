@@ -16,7 +16,7 @@ test("whatsapp message has id, items, coupon line and total", () => {
     { id: "DW-1001", items: [{ id: 1, name: "Rocket", price: 100, qty: 2 }], subtotal: 200, discount: 20, percent: 10, coupon: "DIWALI10", total: 180 },
     { name: "Asha", phone: "9876543210", address: "KMS 214", payment: "UPI" },
   );
-  for (const s of ["DW-1001", "Rocket × 2 = ₹200", "DIWALI10 (-10%)", "*Total: ₹180*", "KMS 214", "advance): ₹90*", "Pay at pickup: ₹90"]) assert.ok(msg.includes(s), s);
+  for (const s of ["DW-1001", "Rocket × 2 = ₹200", "DIWALI10 (-10%)", "*Total: ₹180*", "KMS 214", "advance): ₹90*", "Pay after you receive your crackers (50%): ₹90"]) assert.ok(msg.includes(s), s);
   assert.deepEqual(split(171), { advance: 86, balance: 85 });
   assert.ok(whatsappUrl("919999999999", "a b&c").endsWith("?text=a%20b%26c"));
 });

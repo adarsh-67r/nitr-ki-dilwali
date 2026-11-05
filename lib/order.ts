@@ -34,7 +34,7 @@ export function cartTotals(cart: Cart, products: Product[], percent: number) {
   return { subtotal, discount, total: subtotal - discount, count };
 }
 
-/** Payment policy: half up front to confirm, the rest at pickup. The odd rupee goes in the advance. */
+/** Payment policy: half up front to confirm, the rest after the buyer receives the crackers. The odd rupee goes in the advance. */
 export const split = (total: number) => ({ advance: Math.ceil(total / 2), balance: Math.floor(total / 2) });
 
 export type Offer = { percent: number; min_amount: number };
@@ -71,7 +71,7 @@ export function whatsappMessage(o: PlacedOrder, c: Customer) {
     `*Total: ${rupee(o.total)}*`,
     ``,
     `*Pay now (50% advance): ${rupee(split(o.total).advance)}*`,
-    `Pay at pickup: ${rupee(split(o.total).balance)}`,
+    `Pay after you receive your crackers (50%): ${rupee(split(o.total).balance)}`,
     `_Order is confirmed once the advance is paid._`,
   ].join("\n");
 }

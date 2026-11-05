@@ -376,7 +376,7 @@ export default function Shop({ products, offers }: { products: Product[]; offers
               <Row label="Total" value={rupee(t.total)} strong />
               <div className="my-1 border-t border-dashed border-border" />
               <Row label="Pay now (50% advance)" value={rupee(split(t.total).advance)} strong />
-              <Row label="Pay at pickup" value={rupee(split(t.total).balance)} />
+              <Row label="Pay after you receive your crackers (50%)" value={rupee(split(t.total).balance)} />
             </dl>
 
             {/* Details */}
@@ -402,7 +402,7 @@ export default function Shop({ products, offers }: { products: Product[]; offers
               {placing ? <Loader2 className="animate-spin" /> : "🚀"} Place order on WhatsApp
             </Button>
             <p className="text-center text-xs text-muted-foreground">
-              Pay half now to confirm your order; pay the rest when you pick up your crackers at Jagda gate. We&apos;ll share the pickup time on WhatsApp.
+              Pay half now to confirm your order; pay the other half after you receive your crackers at Jagda gate. We&apos;ll share the pickup time on WhatsApp.
             </p>
           </div>
         </SheetContent>

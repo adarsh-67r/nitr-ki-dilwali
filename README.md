@@ -8,14 +8,14 @@ A Diwali cracker ordering site for NIT Rourkela hostels. Students pick crackers 
 - Price list with categories, search, a category filter and price sort
 - MRP shown struck out next to the selling price
 - Coupon codes, plus automatic offers once the cart reaches a minimum amount
-- UPI only: 50% advance to confirm the order, the rest at pickup
+- UPI only: 50% advance to confirm the order, the other 50% after the buyer receives the crackers
 - Order opens a pre-filled WhatsApp chat (WhatsApp Web on PC, the app on phones)
 
 **Admin (`/admin`)**
 - Add, edit and delete crackers, with an image upload for each one
 - Bulk import from Excel (`public/crackers-template.xlsx`)
 - Manage stock, coupons and automatic offers
-- View and search orders, with advance and pickup amounts
+- View and search orders, with advance and balance amounts
 - One superadmin who adds admins and sets their passwords
 
 **Security**
