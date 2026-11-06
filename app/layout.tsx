@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Albert_Sans, Imbue } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import Effects from "@/components/Effects";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const sans = Albert_Sans({ variable: "--font-sans", subsets: ["latin"], weight: ["400", "500", "700"] });
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Effects />
         <Toaster position="top-center" />
+        <Analytics />
       </body>
     </html>
   );
