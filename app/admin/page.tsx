@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import type { Session } from "@supabase/supabase-js";
-import { FileSpreadsheet, Loader2, Search, LogOut, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Camera, FileSpreadsheet, ImageUp, Loader2, Search, LogOut, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,8 +48,8 @@ export default function AdminPage() {
     );
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-heading text-3xl text-sindoor">Admin</h1>
         <div className="flex gap-1">
           <ChangePassword />
@@ -57,7 +57,7 @@ export default function AdminPage() {
         </div>
       </div>
       <Tabs defaultValue="products">
-        <TabsList>
+        <TabsList className="w-full sm:w-fit">
           <TabsTrigger value="products">Crackers</TabsTrigger>
           <TabsTrigger value="coupons">Coupons</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
@@ -204,12 +204,12 @@ function Products() {
 
   return (
     <>
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{rows.length} crackers · the shop updates within about a minute</p>
           <p className="text-xs text-muted-foreground">Excel columns: Name, Category, Price, MRP, Description, In stock (yes/no), Sort. Same name updates an existing cracker.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <a className={buttonVariants({ variant: "ghost" })} href="/crackers-template.xlsx" download>Template</a>
           <label className={buttonVariants({ variant: "outline", className: `cursor-pointer focus-within:ring-3 focus-within:ring-ring/50 ${importing ? "pointer-events-none opacity-50" : ""}` })}>
             {importing ? <Loader2 className="animate-spin" /> : <FileSpreadsheet />} Import Excel
@@ -238,27 +238,27 @@ function Products() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-14" />
+              <TableHead className="hidden w-14 sm:table-cell" />
               <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
+              <TableHead className="hidden sm:table-cell">Category</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>In stock</TableHead>
-              <TableHead className="w-24" />
+              <TableHead className="w-20" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {shown.map((p) => (
               <TableRow key={p.id}>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   {p.image_url
                     ? <Image src={p.image_url} alt="" width={40} height={40} className="size-10 rounded object-cover" />
                     : <div className="size-10 rounded bg-muted" />}
                 </TableCell>
-                <TableCell className="font-medium">{p.name}</TableCell>
-                <TableCell>{p.category}</TableCell>
+                <TableCell className="whitespace-normal font-medium">{p.name}<span className="block text-xs font-normal text-muted-foreground sm:hidden">{p.category}</span></TableCell>
+                <TableCell className="hidden sm:table-cell">{p.category}</TableCell>
                 <TableCell>{rupee(p.price)}{p.mrp ? <s className="ml-2 text-xs text-muted-foreground">{rupee(p.mrp)}</s> : null}</TableCell>
                 <TableCell><Switch checked={p.in_stock} onCheckedChange={(v) => toggleStock(p, v)} aria-label={`${p.name} in stock`} /></TableCell>
-                <TableCell className="text-right">
+                <TableCell className="whitespace-nowrap text-right">
                   <Button size="icon-sm" variant="ghost" aria-label={`Edit ${p.name}`} onClick={() => setEditing(p)}><Pencil /></Button>
                   <Button size="icon-sm" variant="ghost" aria-label={`Delete ${p.name}`} onClick={() => remove(p)}><Trash2 /></Button>
                 </TableCell>
@@ -318,7 +318,7 @@ function ProductDialog({ initial, categories, onClose, onSaved }: {
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto">
         <DialogHeader><DialogTitle>{p.id ? "Edit cracker" : "Add cracker"}</DialogTitle></DialogHeader>
         <form id="product-form" onSubmit={save} className="flex flex-col gap-3">
           <Label htmlFor="p-name">Name</Label>
@@ -328,7 +328,7 @@ function ProductDialog({ initial, categories, onClose, onSaved }: {
           <datalist id="cats">{categories.map((c) => <option key={c} value={c} />)}</datalist>
           <Label htmlFor="p-desc">Description</Label>
           <Input id="p-desc" value={p.description ?? ""} onChange={(e) => setP({ ...p, description: e.target.value })} />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="p-mrp">MRP (₹, struck out)</Label>
               <Input id="p-mrp" type="number" min={0} step={1} placeholder="optional" value={p.mrp ?? ""} onChange={(e) => setP({ ...p, mrp: e.target.value === "" ? null : Number(e.target.value) })} />
@@ -342,10 +342,18 @@ function ProductDialog({ initial, categories, onClose, onSaved }: {
               <Input id="p-sort" type="number" step={1} value={p.sort} onChange={(e) => setP({ ...p, sort: Number(e.target.value) })} />
             </div>
           </div>
-          <Label htmlFor="p-img">Image</Label>
-          <div className="flex items-center gap-3">
+          <span className="text-sm font-medium">Image</span>
+          <div className="flex flex-wrap items-center gap-2">
             {p.image_url && <Image src={p.image_url} alt="" width={56} height={56} className="size-14 rounded object-cover" />}
-            <Input id="p-img" type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
+            {([["Upload photo", ImageUp, undefined], ["Take photo", Camera, "environment"]] as const).map(([label, Icon, capture]) => (
+              <label key={label} className={buttonVariants({ variant: "outline", size: "sm", className: `cursor-pointer focus-within:ring-3 focus-within:ring-ring/50 ${busy ? "pointer-events-none opacity-50" : ""}` })}>
+                <Icon /> {label}
+                <input
+                  type="file" accept="image/*" capture={capture} className="sr-only"
+                  onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) upload(f); }}
+                />
+              </label>
+            ))}
             {p.image_url && <Button type="button" variant="ghost" size="sm" onClick={() => setP({ ...p, image_url: null })}>Remove</Button>}
           </div>
           <label className="flex items-center gap-2 text-sm">
@@ -404,7 +412,7 @@ function Coupons() {
   return (
     <>
       <form onSubmit={add} className="mb-4 flex flex-wrap items-end gap-3">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex w-full flex-col gap-1.5 sm:w-auto">
           <Label htmlFor="c-code">Code</Label>
           <Input id="c-code" className="uppercase" value={code} onChange={(e) => setCode(e.target.value)} placeholder="HOSTEL20" />
         </div>
@@ -428,14 +436,14 @@ function Coupons() {
       <div className="rounded-xl border border-border">
         <Table>
           <TableHeader>
-            <TableRow><TableHead>Code</TableHead><TableHead>% off</TableHead><TableHead>Min. order</TableHead><TableHead>Automatic</TableHead><TableHead>Active</TableHead><TableHead className="w-12" /></TableRow>
+            <TableRow><TableHead>Code</TableHead><TableHead>% off</TableHead><TableHead className="hidden sm:table-cell">Min. order</TableHead><TableHead>Auto</TableHead><TableHead>Active</TableHead><TableHead className="w-12" /></TableRow>
           </TableHeader>
           <TableBody>
             {rows.map((c) => (
               <TableRow key={c.code}>
-                <TableCell className="font-medium">{c.code}</TableCell>
+                <TableCell className="font-medium">{c.code}{c.min_amount ? <span className="block text-xs font-normal text-muted-foreground sm:hidden">min {rupee(c.min_amount)}</span> : null}</TableCell>
                 <TableCell>{c.percent_off}%</TableCell>
-                <TableCell>{c.min_amount ? rupee(c.min_amount) : "—"}</TableCell>
+                <TableCell className="hidden sm:table-cell">{c.min_amount ? rupee(c.min_amount) : "—"}</TableCell>
                 <TableCell><Switch checked={c.auto} onCheckedChange={(v) => update(c, { auto: v })} aria-label={`${c.code} automatic`} /></TableCell>
                 <TableCell><Switch checked={c.active} onCheckedChange={(v) => update(c, { active: v })} aria-label={`${c.code} active`} /></TableCell>
                 <TableCell><Button size="icon-sm" variant="ghost" aria-label={`Delete ${c.code}`} onClick={() => remove(c)}><Trash2 /></Button></TableCell>
@@ -503,11 +511,11 @@ function Admins() {
   return (
     <>
       <form onSubmit={add} className="mb-4 flex flex-wrap items-end gap-3">
-        <div className="flex w-72 flex-col gap-1.5">
+        <div className="flex w-full flex-col gap-1.5 sm:w-72">
           <Label htmlFor="a-email">Email</Label>
           <Input id="a-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="friend@nitrkl.ac.in" />
         </div>
-        <div className="flex w-56 flex-col gap-1.5">
+        <div className="flex w-full flex-col gap-1.5 sm:w-56">
           <Label htmlFor="a-pw">Password</Label>
           <Input id="a-pw" type="text" autoComplete="off" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="at least 8 characters" />
         </div>
@@ -519,12 +527,12 @@ function Admins() {
       </p>
       <div className="rounded-xl border border-border">
         <Table>
-          <TableHeader><TableRow><TableHead>Email</TableHead><TableHead className="w-56" /></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead>Email</TableHead><TableHead /></TableRow></TableHeader>
           <TableBody>
             {rows.map((a) => (
               <TableRow key={a.email}>
-                <TableCell>{a.email}{a.super && <span className="ml-2 text-xs text-muted-foreground">(superadmin, you)</span>}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="whitespace-normal [overflow-wrap:anywhere]">{a.email}{a.super && <span className="block text-xs sm:ml-2 sm:inline text-muted-foreground">(superadmin, you)</span>}</TableCell>
+                <TableCell className="whitespace-nowrap text-right">
                   {!a.super && (
                     <>
                       <Button size="sm" variant="ghost" onClick={() => setResetFor(a.email)}>Set password</Button>
@@ -601,7 +609,7 @@ function Orders() {
 
   return (
     <>
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
           {shown.length === rows.length ? rows.length : `${shown.length} of ${rows.length}`} orders · {rupee(revenue)} total (unconfirmed)
         </p>
@@ -610,7 +618,27 @@ function Orders() {
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchBox value={q} onChange={setQ} placeholder="Search order no., name, phone, hostel, item" />
       </div>
-      <div className="rounded-xl border border-border">
+      {/* Phones get cards; the six-column table needs a wider screen. */}
+      <ul className="flex flex-col gap-3 sm:hidden">
+        {shown.map((o) => (
+          <li key={o.id} className="rounded-xl border border-border p-3 text-sm">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="font-mono font-medium">#{o.id}</span>
+              <span className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" })}</span>
+            </div>
+            <p className="mt-1">
+              {o.name} · <a className="text-primary underline" href={`https://wa.me/91${o.phone}`} target="_blank" rel="noreferrer">{o.phone}</a>
+            </p>
+            <p className="text-muted-foreground">{o.address}</p>
+            <p className="mt-2 text-xs">{o.items.map((i) => `${i.name} × ${i.qty}`).join(", ")}</p>
+            <p className="mt-2 font-medium">{rupee(o.total)}</p>
+            <p className="text-xs text-muted-foreground">
+              Advance {rupee(split(o.total).advance)} · after receiving {rupee(split(o.total).balance)} · {o.payment_mode}{o.coupon ? ` · ${o.coupon}` : ""}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden rounded-xl border border-border sm:block">
         <Table>
           <TableHeader>
             <TableRow>
