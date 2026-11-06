@@ -28,7 +28,8 @@ export async function POST(req: Request) {
 
   const admin = createClient(URL, secret, { auth: { persistSession: false, autoRefreshToken: false } });
 
-  const { error: listErr } = await admin.from("admins").upsert({ email }, { onConflict: "email", ignoreDuplicates: true });
+  // Insert as the caller: the "admins add" RLS policy allows the superadmin; service_role has no table grant.
+  const { error: listErr } = await caller.from("admins").upsert({ email }, { onConflict: "email", ignoreDuplicates: true });
   if (listErr) return err(500, listErr.message);
 
   const created = await admin.auth.admin.createUser({ email, password, email_confirm: true });
